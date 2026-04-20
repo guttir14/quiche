@@ -127,17 +127,6 @@ pub use self::hooks::ConnectionHook;
 /// Alias of [quiche::Connection] used internally by the crate.
 pub type QuicheConnection = quiche::Connection<crate::buf_factory::BufFactory>;
 
-fn make_qlog_writer(
-    dir: &str, id: &str,
-) -> std::io::Result<std::io::BufWriter<std::fs::File>> {
-    let mut path = std::path::PathBuf::from(dir);
-    let filename = format!("{id}.sqlog");
-    path.push(filename);
-
-    let f = std::fs::File::create(&path)?;
-    Ok(std::io::BufWriter::new(f))
-}
-
 /// Connects to an HTTP/3 server using `socket` and the default client
 /// configuration.
 ///
@@ -237,21 +226,7 @@ where
         })?;
     }
 
-    // Set the qlog writer here instead of in the `ClientConnector` to avoid
-    // missing logs from early in the connection
-    if let Some(qlog_dir) = &client_config.qlog_dir {
-        log::info!("setting up qlogs"; "qlog_dir"=>qlog_dir);
-        let id = format!("{:?}", &scid);
-        if let Ok(writer) = make_qlog_writer(qlog_dir, &id) {
-            quiche_conn.set_qlog(
-                std::boxed::Box::new(writer),
-                "tokio-quiche qlog".to_string(),
-                format!("tokio-quiche qlog id={id}"),
-            );
-        }
-    }
-
-    // Set the keylog file here for the same reason
+    // Set the keylog file here
     if let Some(keylog_file) = &client_config.keylog_file {
         log::info!("setting up keylog file");
         if let Ok(keylog_clone) = keylog_file.try_clone() {
@@ -309,7 +284,6 @@ where
     let acceptor = ConnectionAcceptor::new(
         ConnectionAcceptorConfig {
             disable_client_ip_validation: config.disable_client_ip_validation,
-            qlog_dir: config.qlog_dir.clone(),
             keylog_file: config
                 .keylog_file
                 .as_ref()

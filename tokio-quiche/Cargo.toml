@@ -59,7 +59,7 @@ ipnetwork = { workspace = true }
 log = { workspace = true }
 octets = { workspace = true }
 pin-project = { workspace = true }
-quiche = { workspace = true, features = ["boringssl-boring-crate", "qlog"] }
+quiche = { workspace = true, features = ["boringssl-boring-crate"] }
 serde = { workspace = true, features = ["derive", "rc"] }
 serde_with = { workspace = true }
 slog-scope = { workspace = true }

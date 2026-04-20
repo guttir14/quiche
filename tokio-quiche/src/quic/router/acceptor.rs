@@ -42,7 +42,6 @@ use crate::metrics::labels;
 use crate::metrics::Metrics;
 use crate::quic::addr_validation_token::AddrValidationTokenManager;
 use crate::quic::connection::SharedConnectionIdGenerator;
-use crate::quic::make_qlog_writer;
 use crate::quic::router::NewConnection;
 use crate::quic::Incoming;
 use crate::QuicResultExt;
@@ -61,7 +60,6 @@ pub(crate) struct ConnectionAcceptor<S, M> {
 
 pub(crate) struct ConnectionAcceptorConfig {
     pub(crate) disable_client_ip_validation: bool,
-    pub(crate) qlog_dir: Option<String>,
     pub(crate) keylog_file: Option<File>,
     #[cfg(target_os = "linux")]
     pub(crate) with_pktinfo: bool,
@@ -111,17 +109,6 @@ where
             )
         }
         .into_io()?;
-
-        if let Some(qlog_dir) = &self.config.qlog_dir {
-            let id = format!("{:?}", &scid);
-            if let Ok(writer) = make_qlog_writer(qlog_dir, &id) {
-                conn.set_qlog(
-                    std::boxed::Box::new(writer),
-                    "tokio-quiche qlog".to_string(),
-                    format!("tokio-quiche qlog id={id}"),
-                );
-            }
-        }
 
         if let Some(keylog_file) = &self.config.keylog_file {
             if let Ok(keylog_clone) = keylog_file.try_clone() {

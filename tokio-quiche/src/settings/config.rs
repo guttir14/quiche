@@ -44,7 +44,6 @@ const KEYLOGFILE_ENABLED: bool =
 pub(crate) struct Config {
     pub quiche_config: quiche::Config,
     pub disable_client_ip_validation: bool,
-    pub qlog_dir: Option<String>,
     pub has_gso: bool,
     pub pacing_offload: bool,
     pub enable_expensive_packet_count_metrics: bool,
@@ -94,7 +93,6 @@ impl Config {
             quiche_config: make_quiche_config(params, keylog_file.is_some())?,
             disable_client_ip_validation: quic_settings
                 .disable_client_ip_validation,
-            qlog_dir: quic_settings.qlog_dir.clone(),
             has_gso,
             pacing_offload,
             enable_expensive_packet_count_metrics: quic_settings
