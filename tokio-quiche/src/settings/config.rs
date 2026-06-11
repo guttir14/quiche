@@ -48,6 +48,8 @@ pub(crate) struct Config {
     pub pacing_offload: bool,
     pub enable_expensive_packet_count_metrics: bool,
     pub keylog_file: Option<File>,
+    #[cfg(feature = "qlog")]
+    pub qlog_dir: Option<String>,
     pub listen_backlog: usize,
     pub handshake_timeout: Option<Duration>,
     pub has_ippktinfo: bool,
@@ -98,6 +100,8 @@ impl Config {
             enable_expensive_packet_count_metrics: quic_settings
                 .enable_expensive_packet_count_metrics,
             keylog_file,
+            #[cfg(feature = "qlog")]
+            qlog_dir: quic_settings.qlog_dir.clone(),
             listen_backlog: quic_settings.listen_backlog,
             handshake_timeout: quic_settings.handshake_timeout,
             has_ippktinfo,

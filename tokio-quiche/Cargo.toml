@@ -14,6 +14,7 @@ rust-version = "1.85"
 # Forwarded quiche features for re-exports
 fuzzing = ["quiche/fuzzing"]
 quiche_internal = ["quiche/internal"]
+qlog = ["quiche/qlog"]
 
 # Enable extra timing instrumentation for QUIC handshakes, including protocol
 # overhead and network delays.
