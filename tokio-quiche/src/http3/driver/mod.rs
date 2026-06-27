@@ -50,7 +50,7 @@ use bytes::Bytes;
 use bytes::BytesMut;
 use datagram_socket::DgramBuffer;
 use datagram_socket::StreamClosureKind;
-use foundations::telemetry::log;
+use crate::telemetry::log;
 use futures::FutureExt;
 use futures_util::stream::FuturesUnordered;
 use quiche::h3;

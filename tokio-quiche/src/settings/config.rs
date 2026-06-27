@@ -24,7 +24,7 @@
 // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-use foundations::telemetry::log;
+use crate::telemetry::log;
 use std::borrow::Cow;
 use std::fs::File;
 use std::time::Duration;

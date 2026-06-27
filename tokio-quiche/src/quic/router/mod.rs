@@ -41,7 +41,7 @@ use crate::quic::connection::SharedConnectionIdGenerator;
 use crate::settings::Config;
 use datagram_socket::DatagramSocketRecv;
 use datagram_socket::DatagramSocketSend;
-use foundations::telemetry::log;
+use crate::telemetry::log;
 use quiche::ConnectionId;
 use quiche::Header;
 use quiche::MAX_CONN_ID_LEN;
@@ -60,9 +60,9 @@ use task_killswitch::spawn_with_killswitch;
 use tokio::sync::mpsc;
 
 #[cfg(target_os = "linux")]
-use foundations::telemetry::metrics::Counter;
+use crate::telemetry::metrics::Counter;
 #[cfg(target_os = "linux")]
-use foundations::telemetry::metrics::TimeHistogram;
+use crate::telemetry::metrics::TimeHistogram;
 #[cfg(target_os = "linux")]
 use libc::sockaddr_in;
 #[cfg(target_os = "linux")]
@@ -72,7 +72,7 @@ type ConnStream<Tx, M> = mpsc::Receiver<io::Result<InitialQuicConnection<Tx, M>>
 
 #[cfg(feature = "perf-quic-listener-metrics")]
 mod listener_stage_timer {
-    use foundations::telemetry::metrics::TimeHistogram;
+    use crate::telemetry::metrics::TimeHistogram;
     use std::time::Instant;
 
     pub(super) struct ListenerStageTimer {

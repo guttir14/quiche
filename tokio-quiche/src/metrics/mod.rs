@@ -29,12 +29,14 @@
 pub mod labels;
 pub mod tokio_task;
 
-use foundations::telemetry::metrics::metrics;
-use foundations::telemetry::metrics::Counter;
-use foundations::telemetry::metrics::Gauge;
-use foundations::telemetry::metrics::Histogram;
-use foundations::telemetry::metrics::HistogramBuilder;
-use foundations::telemetry::metrics::TimeHistogram;
+#[cfg(feature = "telemetry")]
+use crate::telemetry::metrics::metrics;
+#[cfg(feature = "telemetry")]
+use crate::telemetry::metrics::HistogramBuilder;
+use crate::telemetry::metrics::Counter;
+use crate::telemetry::metrics::Gauge;
+use crate::telemetry::metrics::Histogram;
+use crate::telemetry::metrics::TimeHistogram;
 use std::net::IpAddr;
 use std::sync::Arc;
 
@@ -261,6 +263,7 @@ impl Metrics for DefaultMetrics {
     }
 }
 
+#[cfg(feature = "telemetry")]
 #[metrics]
 pub(crate) mod quic {
     /// Number of QUIC connections currently in memory
@@ -348,6 +351,7 @@ pub(crate) mod quic {
         -> Counter;
 }
 
+#[cfg(feature = "telemetry")]
 #[metrics]
 mod tokio {
     /// Histogram of task schedule delays
@@ -363,6 +367,41 @@ mod tokio {
 
     /// Helps us get a rough idea of if our waker is causing issues.
     pub fn runtime_task_total_poll_time_micros(task: &Arc<str>) -> Counter;
+}
+
+#[cfg(not(feature = "telemetry"))]
+pub(crate) mod quic {
+    use super::*;
+
+    pub fn connections_in_memory() -> Gauge { Gauge }
+    pub fn maximum_writable_streams() -> Histogram { Histogram }
+    pub fn handshake_time_seconds(_stage: labels::QuicHandshakeStage) -> TimeHistogram { TimeHistogram }
+    pub fn write_errors(_reason: labels::QuicWriteError) -> Counter { Counter }
+    pub fn send_to_wouldblock_duration_s() -> TimeHistogram { TimeHistogram }
+    pub fn skipped_mid_handshake_flush_count() -> Counter { Counter }
+    pub fn invalid_cid_packet_count(_reason: String) -> Counter { Counter }
+    pub fn accepted_initial_packet_count() -> Counter { Counter }
+    pub fn expensive_accepted_initial_packet_count(_peer_ip: IpAddr) -> Counter { Counter }
+    pub fn rejected_initial_packet_count(_reason: labels::QuicInvalidInitialPacketError) -> Counter { Counter }
+    pub fn expensive_rejected_initial_packet_count(_reason: labels::QuicInvalidInitialPacketError, _peer_ip: IpAddr) -> Counter { Counter }
+    pub fn utilized_bandwidth() -> Gauge { Gauge }
+    pub fn max_bandwidth_mbps() -> Histogram { Histogram }
+    pub fn max_loss_pct() -> Histogram { Histogram }
+    pub fn udp_drop_count() -> Counter { Counter }
+    pub fn failed_handshakes(_reason: labels::HandshakeError) -> Counter { Counter }
+    pub fn local_h3_conn_close_error_count(_reason: labels::H3Error) -> Counter { Counter }
+    pub fn local_quic_conn_close_error_count(_reason: labels::QuicError) -> Counter { Counter }
+    pub fn peer_h3_conn_close_error_count(_reason: labels::H3Error) -> Counter { Counter }
+    pub fn peer_quic_conn_close_error_count(_reason: labels::QuicError) -> Counter { Counter }
+}
+
+#[cfg(not(feature = "telemetry"))]
+mod tokio {
+    use super::*;
+
+    pub fn runtime_task_schedule_delay_histogram(_task: &Arc<str>) -> TimeHistogram { TimeHistogram }
+    pub fn runtime_task_poll_duration_histogram(_task: &Arc<str>) -> TimeHistogram { TimeHistogram }
+    pub fn runtime_task_total_poll_time_micros(_task: &Arc<str>) -> Counter { Counter }
 }
 
 pub(crate) fn quic_expensive_metrics_ip_reduce(ip: IpAddr) -> Option<IpAddr> {

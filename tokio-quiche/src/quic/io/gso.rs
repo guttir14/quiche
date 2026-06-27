@@ -28,8 +28,8 @@ use std::io;
 use std::net::SocketAddr;
 use std::time::Instant;
 
-use foundations::telemetry::metrics::Counter;
-use foundations::telemetry::metrics::TimeHistogram;
+use crate::telemetry::metrics::Counter;
+use crate::telemetry::metrics::TimeHistogram;
 
 #[cfg(all(target_os = "linux", not(feature = "fuzzing")))]
 mod linux_imports {

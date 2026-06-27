@@ -32,7 +32,7 @@ use std::time::Duration;
 use crate::http3::driver::H3ConnectionError;
 use crate::quic::QuicheConnection;
 
-use foundations::telemetry::log;
+use crate::telemetry::log;
 use tokio_util::time::delay_queue::DelayQueue;
 use tokio_util::time::delay_queue::{
     self,

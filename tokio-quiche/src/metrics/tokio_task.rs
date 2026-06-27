@@ -35,7 +35,7 @@
 //! than we would like.
 
 use crate::metrics::Metrics;
-use foundations::telemetry::TelemetryContext;
+use crate::telemetry::TelemetryContext;
 use pin_project::pin_project;
 use std::future::Future;
 use std::pin::Pin;

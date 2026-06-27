@@ -57,7 +57,7 @@ use datagram_socket::DatagramSocketSend;
 use datagram_socket::DatagramSocketSendExt;
 use datagram_socket::MaybeConnectedSocket;
 use datagram_socket::QuicAuditStats;
-use foundations::telemetry::log;
+use crate::telemetry::log;
 use quiche::ConnectionId;
 use quiche::Error as QuicheError;
 use quiche::SendInfo;
@@ -847,7 +847,7 @@ where
                 qconn,
             }),
             Err(e) => {
-                foundations::telemetry::log::warn!(
+                crate::telemetry::log::warn!(
                     "Handshake stage on_connection_established failed"; "error"=>%e
                 );
 

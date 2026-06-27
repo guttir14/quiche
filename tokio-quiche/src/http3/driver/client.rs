@@ -29,7 +29,7 @@ use std::collections::VecDeque;
 use std::sync::Arc;
 use std::time::Duration;
 
-use foundations::telemetry::log;
+use crate::telemetry::log;
 use quiche::h3;
 use tokio::sync::mpsc;
 use tokio::sync::oneshot;

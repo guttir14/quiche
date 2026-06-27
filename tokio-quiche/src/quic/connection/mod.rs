@@ -41,7 +41,7 @@ use datagram_socket::MaybeConnectedSocket;
 use datagram_socket::QuicAuditStats;
 use datagram_socket::ShutdownConnection;
 use datagram_socket::SocketStats;
-use foundations::telemetry::log;
+use crate::telemetry::log;
 use futures::future::BoxFuture;
 use futures::Future;
 use quiche::ConnectionId;

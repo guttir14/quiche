@@ -102,9 +102,11 @@ pub mod quic;
 mod result;
 pub mod settings;
 pub mod socket;
+pub(crate) mod telemetry;
 
 pub use datagram_socket;
 
+#[cfg(feature = "telemetry")]
 use foundations::telemetry::settings::LogVerbosity;
 use std::io;
 use std::sync::Arc;
@@ -191,6 +193,7 @@ where
     listen_with_capabilities(quic_sockets, params, metrics)
 }
 
+#[cfg(feature = "telemetry")]
 static GLOBAL_LOGGER_ONCE: Once = Once::new();
 
 /// Forward Quiche logs into the slog::Drain currently used by Foundations
@@ -208,6 +211,7 @@ static GLOBAL_LOGGER_ONCE: Once = Once::new();
 /// requires that you only set the global logger once. That means that we have
 /// to register the logger at `listen()` time for servers - for clients, we
 /// should register loggers when the `quiche::Connection` is established.
+#[cfg(feature = "telemetry")]
 pub(crate) fn capture_quiche_logs() {
     GLOBAL_LOGGER_ONCE.call_once(|| {
         use foundations::telemetry::log as foundations_log;
@@ -235,4 +239,10 @@ pub(crate) fn capture_quiche_logs() {
         // process.
         std::mem::forget(scope_guard)
     });
+}
+
+#[cfg(not(feature = "telemetry"))]
+pub(crate) fn capture_quiche_logs() {
+    // Telemetry is disabled: forwarding quiche logs into the foundations/slog
+    // pipeline is unavailable, so this is a no-op.
 }
