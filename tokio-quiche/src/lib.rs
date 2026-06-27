@@ -24,6 +24,12 @@
 // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+// When the `telemetry` feature is disabled, the structured logging macros in
+// `crate::telemetry::log` expand to no-ops that swallow their arguments. That
+// leaves error/identifier bindings used only for logging unused, so relax that
+// single lint in non-telemetry builds only (telemetry builds stay strict).
+#![cfg_attr(not(feature = "telemetry"), allow(unused_variables))]
+
 //! Bridging the gap between [quiche] and [tokio].
 //!
 //! tokio-quiche connects [quiche::Connection]s and [quiche::h3::Connection]s to
@@ -109,9 +115,10 @@ pub use datagram_socket;
 #[cfg(feature = "telemetry")]
 use foundations::telemetry::settings::LogVerbosity;
 use std::io;
+#[cfg(feature = "telemetry")]
 use std::sync::Arc;
-use std::sync::Once;
-use tokio::net::UdpSocket;
+#[cfg(feature = "telemetry")]
+use std::sync::Once;use tokio::net::UdpSocket;
 use tokio_stream::wrappers::ReceiverStream;
 
 use crate::metrics::Metrics;
